@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfume Recommendations System </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            background-image: url('https://img.freepik.com/free-photo/perfume-bottle-nestles-lush-tapestry-vibrant-fresh-flowers_91128-4435.jpg?ga=GA1.1.564515933.1739890417&semt=ais_hybrid&w=740');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1" fill="rgba(201,168,117,0.03)"/></svg>');
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary-color);
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            letter-spacing: 3px;
+            font-weight: 300;
+            text-transform: uppercase;
+        }
+
+        button {
+            padding: 15px 30px;
+            margin: 0 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            background-color: var(--primary-color);
+            color: rgb(249, 230, 248);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: transparent;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        .card img {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        .clear-button {
+            background-color: transparent;
+            color: var(--primary-color);
+        }
+
+        .clear-button:hover {
+            background-color: var(--primary-color);
+            color: rgb(248, 232, 250);
+        }
+
+        :root {
+            --primary-color: #d4af37;
+            --secondary-color: #2c2c2c;
+            --background-color: #ffffff;
+            --card-bg: #f8f8f8;
+            --text-primary: #2c2c2c;
+            --text-secondary: #666666;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --input-bg: #ffffff;
+            --hover-color: #b69661;
+            --elegant-glow: 0 5px 15px rgba(201, 168, 117, 0.2);
+            --card-border: 1px solid rgba(201, 168, 117, 0.2);
+        }
+
+        .error {
+            color: red;
+            margin-top: 15px;
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .card {
+            background-color: rgba(248, 226, 250, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(212, 175, 55, 0.1), transparent);
+            pointer-events: none;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--elegant-glow);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .search-container {
+            margin-bottom: 40px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 15px 25px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: var(--elegant-glow);
+        }
+
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .no-results i {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <h1>ESSENCE</h1>
+    <p class="subtitle">Discover Your Signature Scent</p>
+
+    <div class="search-container">
+        <input type="text" id="perfume_name" placeholder="Enter a perfume name..." autocomplete="off">
+        <button onclick="getRecommendations()">Discover Similar Fragrances</button>
+        <button class="clear-button" onclick="clearSearch()">Clear</button>
+    </div>
+    <div id="recommendations" class="recommendations"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+<script>
+    async function getRecommendations() {
+        const perfumeName = document.getElementById('perfume_name').value;
+        const recommendationsContainer = document.getElementById('recommendations');
+
+        if (perfumeName.trim() === "") {
+            recommendationsContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>Please enter a perfume name to discover similar fragrances</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Show loading state
+        recommendationsContainer.innerHTML = `
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Discovering similar fragrances...</p>
+            </div>
+        `;
+
+        try {
+            const response = await fetch('http://127.0.0.1:5000/perfume-recommendations', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ perfume_name: perfumeName })
+            });
+
+            const data = await response.json();
+            recommendationsContainer.innerHTML = ''; // Clear loading state
+
+            if (data.recommendations && data.recommendations.length > 0) {
+                data.recommendations.forEach(rec => {
+                    const recElement = document.createElement('div');
+                    recElement.classList.add('card');
+                    recElement.innerHTML = `
+                        <img src="${rec.image || 'https://via.placeholder.com/300x400?text=Perfume+Image'}" 
+                             alt="${rec.name}" 
+                             onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
+                        <div class="recommendation-content">
+                            <h3>${rec.name}</h3>
+                            <p><strong>Brand:</strong> ${rec.brand || 'Luxury Brand'}</p>
+                            <p>${rec.description || 'A captivating fragrance that embodies elegance and sophistication.'}</p>
+                        </div>
+                    `;
+                    recommendationsContainer.appendChild(recElement);
+                });
+            } else {
+                recommendationsContainer.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <p>No similar fragrances found for "${perfumeName}". Try another perfume!</p>
+                    </div>
+                `;
+            }
+        } catch (error) {
+            recommendationsContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Oops! Something went wrong. Please try again later.</p>
+                </div>
+            `;
+            console.error('Error:', error);
+        }
+    }
+
+    function clearSearch() {
+        document.getElementById('perfume_name').value = '';
+        document.getElementById('recommendations').innerHTML = '';
+    }
+
+    // Add event listener for Enter key
+    document.getElementById('perfume_name').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            getRecommendations();
+        }
+    });
+</script>
+</body>
+</html>
